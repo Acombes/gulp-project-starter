@@ -1,0 +1,15 @@
+{% extends "./outerLayout.njk" %}
+
+{% block page %}
+    {% block header %}
+        {% include '../partials/header.njk' %}
+    {% endblock %}
+
+    <div class="page-wrapper">
+        {% block pageBody %}{% endblock %}
+    </div>
+
+    {% block footer %}
+        {% include '../partials/footer.njk' %}
+    {% endblock %}
+{% endblock %}

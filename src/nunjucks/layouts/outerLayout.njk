@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Example page</title>
+
+    {% block stylesheets %}
+        <link rel="stylesheet" href="/css/style.min.css">
+    {% endblock %}
+
+</head>
+<body>
+{% block page %}{% endblock %}
+
+{% block scripts %}
+    <script src="js/example.min.js"></script>
+{% endblock %}
+</body>
+</html>
