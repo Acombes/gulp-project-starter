@@ -1,4 +1,5 @@
 import gulp from 'gulp'
+import glob from 'glob'
 import fs from 'fs'
 import del from 'del'
 import cache from 'gulp-cached'
@@ -14,7 +15,10 @@ import sassCache from 'gulp-better-sass-inheritance'
 import autoprefixer from 'gulp-autoprefixer'
 import minifyCss from 'gulp-minify-css'
 
-import debug from 'gulp-debug'
+import browserify from 'browserify'
+import babelify from 'babelify'
+import vfsSource from 'vinyl-source-stream'
+import vfsBuffer from 'vinyl-buffer'
 
 const paths = {
   data: 'src/data.json',
@@ -28,7 +32,8 @@ const paths = {
     dest: 'dist/asset',
   },
   js: {
-    src: 'src/js/**/*.js',
+    bundleSrc: 'src/js/bundled/**/*.js',
+    src: 'src/js/*.js',
     dest: 'dist/js',
   },
   scss: {
@@ -63,7 +68,22 @@ gulp.task('asset', () => gulp.src(paths.asset.src)
   .pipe(gulp.dest(paths.asset.dest))
 )
 
-gulp.task('js', () => gulp.src(paths.js.src)
+gulp.task('js:bundle', () => browserify({
+    entries: glob.sync(paths.js.bundleSrc),
+    debug: false,
+  })
+    .transform(babelify)
+    .bundle()
+    .pipe(vfsSource('bundle.js'))
+    .pipe(vfsBuffer())
+    .pipe(gulp.dest(paths.js.dest))
+    .pipe(uglify())
+    .pipe(rename({ suffix: '.min' }))
+    .pipe(gulp.dest(paths.js.dest))
+    .pipe(browserSync.reload({ stream: true }))
+)
+
+gulp.task('js:other', () => gulp.src(paths.js.src)
   .pipe(cache('js'))
   .pipe(babel())
   .pipe(gulp.dest(paths.js.dest))
@@ -72,6 +92,8 @@ gulp.task('js', () => gulp.src(paths.js.src)
   .pipe(gulp.dest(paths.js.dest))
   .pipe(browserSync.reload({ stream:true }))
 )
+
+gulp.task('js', gulp.parallel('js:other', 'js:bundle'))
 
 gulp.task('css', () => gulp.src(paths.scss.src)
   .pipe(cache('css'))
@@ -97,7 +119,8 @@ gulp.task('default', gulp.series(
     'browser-sync',
     makeWatcher(paths.asset.src, 'asset', 'bs-reload'),
     makeWatcher(paths.scss.src, 'css'),
-    makeWatcher(paths.js.src, 'js'),
+    makeWatcher(paths.js.src, 'js:other'),
+    makeWatcher(paths.js.bundleSrc, 'js:bundle'),
     makeWatcher([ paths.html.src, paths.data ], 'html', 'bs-reload'),
   )
 ))

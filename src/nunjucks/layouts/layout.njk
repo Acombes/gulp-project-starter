@@ -13,3 +13,9 @@
         {% include '../partials/footer.njk' %}
     {% endblock %}
 {% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+    <script src="js/unbundled-example.min.js"></script>
+{% endblock %}
+
