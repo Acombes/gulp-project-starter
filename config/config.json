@@ -1,0 +1,30 @@
+{
+  "serverBaseDir": "./dist",
+  "paths": {
+    "data": "src/data.json",
+    "html": {
+      "src": "src/**/*.njk",
+      "dest": "dist",
+      "pageSrcDir": "src"
+    },
+    "asset": {
+      "src": "src/asset/**/*",
+      "dest": "dist/asset"
+    },
+    "js": {
+      "bundleSrc": "src/js/bundled/**/*.js",
+      "src": "src/js/*.js",
+      "dest": "dist/js"
+    },
+    "scss": {
+      "src": "src/scss/**/*.scss",
+      "dest": "dist/css"
+    },
+    "svg": {
+      "src": "src/asset/svg/sprite/**/*.svg",
+      "dest": "dist/asset",
+      "spriteName": "sprite.svg"
+    }
+  },
+  "spriteClass": "svg-sprite"
+}
